@@ -1,0 +1,621 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Gestión de Proyectos</title>
+
+    <style>
+        /* 1. ESTILOS GENERALES */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #eef2f7;
+            color: #333;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* 2. BARRA LATERAL */
+        .sidebar {
+            width: 240px;
+            background: linear-gradient(180deg, #111827, #1f2937);
+            color: #fff;
+            padding: 20px;
+            flex-shrink: 0;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            box-shadow: 4px 0 15px rgba(0,0,0,0.12);
+        }
+
+        .sidebar h2 {
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #374151;
+            padding-bottom: 10px;
+            color: #38bdf8;
+        }
+
+        .sidebar ul {
+            list-style: none;
+        }
+
+        .sidebar li {
+            margin-bottom: 12px;
+        }
+
+        .sidebar a {
+            color: #d1d5db;
+            text-decoration: none;
+            font-weight: bold;
+            display: block;
+            padding: 10px 12px;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .sidebar a:hover {
+            background-color: #38bdf8;
+            color: #111827;
+            transform: translateX(5px);
+        }
+
+        /* 3. CONTENIDO PRINCIPAL */
+        .main-conten {
+            flex: 1;
+            padding: 30px;
+            margin-left: 240px;
+            overflow-y: auto;
+            min-width: 0;
+        }
+
+        header {
+            margin-bottom: 25px;
+            background: linear-gradient(135deg, #ffffff, #f8fafc);
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.07);
+            border-left: 5px solid #38bdf8;
+        }
+
+        header h1 {
+            color: #1e293b;
+            font-size: 1.8rem;
+            margin-bottom: 8px;
+        }
+
+        header p {
+            color: #64748b;
+            line-height: 1.6;
+        }
+
+        /* 4. SECCIONES */
+        .section-card {
+            background-color: #fff;
+            padding: 25px;
+            margin-bottom: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+        }
+
+        .section-card h2 {
+            color: #1e293b;
+            margin-bottom: 15px;
+            border-left: 4px solid #38bdf8;
+            padding-left: 10px;
+        }
+
+        .section-card > p {
+            color: #475569;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        /* 5. TARJETAS */
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 15px;
+        }
+
+        .grid-card {
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 18px;
+            background-color: #f8fafc;
+            transition: all 0.3s;
+        }
+
+        .grid-card:hover {
+            border-color: #38bdf8;
+            box-shadow: 0 5px 15px rgba(56,189,248,0.15);
+            transform: translateY(-3px);
+        }
+
+        .grid-card h3 {
+            color: #0284c7;
+            margin-bottom: 10px;
+            line-height: 1.4;
+        }
+
+        .grid-card p {
+            font-size: 0.95rem;
+            color: #475569;
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+
+        .grid-card a {
+            color: #0284c7;
+            font-weight: bold;
+        }
+
+        /* 6. GLOSARIO */
+        .glossary-item {
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px dashed #cbd5e1;
+        }
+
+        .glossary-item:last-child {
+            border-bottom: none;
+        }
+
+        .glossary-term {
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 7px;
+        }
+
+        .glossary-item p {
+            line-height: 1.6;
+            color: #475569;
+        }
+
+        /* 7. ETIQUETAS */
+        .tag {
+            display: inline-block;
+            background-color: #e0f2fe;
+            color: #0284c7;
+            font-size: 0.8rem;
+            padding: 5px 10px;
+            border-radius: 20px;
+            margin-top: 8px;
+            font-weight: bold;
+        }
+
+        /* 8. PRINCIPIOS */
+        .principio-card {
+            border-top: 4px solid #38bdf8;
+        }
+
+        .principio-numero {
+            display: inline-block;
+            color: #0284c7;
+            background: #e0f2fe;
+            border-radius: 6px;
+            padding: 5px 9px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            margin-bottom: 12px;
+        }
+
+        .principio-card h3 {
+            color: #1e293b;
+        }
+
+        .principio-card strong {
+            color: #334155;
+        }
+
+        .introduccion-principios {
+            background: #f0f9ff;
+            border-left: 4px solid #0284c7;
+            padding: 15px;
+            border-radius: 8px;
+            color: #334155;
+            line-height: 1.7;
+            margin-bottom: 20px;
+        }
+
+        /* 9. DISEÑO RESPONSIVO */
+        @media (max-width: 768px) {
+            body {
+                display: block;
+            }
+
+            .sidebar {
+                position: relative;
+                width: 100%;
+                height: auto;
+                padding: 15px;
+            }
+
+            .sidebar ul {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 5px;
+            }
+
+            .sidebar li {
+                margin-bottom: 0;
+            }
+
+            .sidebar a {
+                padding: 8px;
+                font-size: 0.85rem;
+            }
+
+            .main-conten {
+                margin-left: 0;
+                padding: 15px;
+            }
+
+            header h1 {
+                font-size: 1.5rem;
+            }
+
+            .section-card {
+                padding: 18px;
+            }
+
+            .grid-container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- BARRA DE NAVEGACIÓN -->
+    <nav class="sidebar">
+        <h2>GP Dashboard</h2>
+
+        <ul>
+            <li><a href="#definiciones">1. Definiciones</a></li>
+            <li><a href="#herramientas">2. Herramientas</a></li>
+            <li><a href="#tecnicas">3. Técnicas</a></li>
+            <li><a href="#proyecto">4. Proyecto talleres</a></li>
+            <li><a href="#principios">5. Principios PMBOK 8</a></li>
+        </ul>
+    </nav>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <main class="main-conten">
+
+        <header>
+            <h1>Dashboard del estudiante: Gestión de Proyectos</h1>
+            <p>
+                Mi espacio personal para consultar conceptos, herramientas,
+                técnicas, principios y avances relacionados con la gestión
+                de proyectos.
+            </p>
+        </header>
+
+        <!-- SECCIÓN 1: DEFINICIONES -->
+        <section id="definiciones" class="section-card">
+
+            <h2>Definiciones fundamentales</h2>
+
+            <div class="glossary-item">
+                <h3 class="glossary-term">¿Qué es un proyecto?</h3>
+                <p>
+                    Un proyecto es un conjunto de actividades planificadas
+                    que se realizan para alcanzar un objetivo específico
+                    dentro de un tiempo y presupuesto determinados.
+                </p>
+            </div>
+
+            <div class="glossary-item">
+                <h3 class="glossary-term">Características de un proyecto</h3>
+                <p>
+                    La gestión de proyectos consiste en planificar,
+                    organizar, dirigir y controlar los recursos necesarios
+                    para cumplir los objetivos establecidos.
+                </p>
+            </div>
+
+            <div class="glossary-item">
+                <h3 class="glossary-term">Proyecto vs. operación</h3>
+                <p>
+                    Un proyecto es una iniciativa temporal con un objetivo
+                    específico, mientras que una operación es una actividad
+                    continua que forma parte del funcionamiento diario
+                    de una organización.
+                </p>
+            </div>
+
+            <div class="glossary-item">
+                <h3 class="glossary-term">Habilidades del gerente de proyectos</h3>
+                <p>
+                    Un gerente de proyectos debe poseer habilidades de
+                    comunicación, liderazgo, planificación, gestión de
+                    riesgos y resolución de problemas.
+                </p>
+            </div>
+
+            <div class="glossary-item">
+                <h3 class="glossary-term">Plan del proyecto</h3>
+                <p>
+                    Es un documento que detalla cómo se llevará a cabo
+                    el proyecto, incluyendo los objetivos, las actividades,
+                    el cronograma, los recursos y los criterios de éxito.
+                </p>
+            </div>
+
+        </section>
+
+        <!-- SECCIÓN 2: HERRAMIENTAS -->
+        <section id="herramientas" class="section-card">
+
+            <h2>Herramientas de gestión</h2>
+
+            <p>
+                Las herramientas de gestión permiten organizar las
+                actividades, controlar los tiempos, distribuir
+                responsabilidades y realizar seguimiento al avance
+                de un proyecto.
+            </p>
+
+            <div class="grid-container">
+
+                <div class="grid-card">
+                    <h3>Matriz de poder e interés</h3>
+
+                    <p>
+                        Permite clasificar a los interesados en un proyecto
+                        según su nivel de poder y su grado de interés.
+                        Es útil para priorizar la comunicación y el
+                        involucramiento de los stakeholders.
+                    </p>
+
+                    <a href="PlantillaMatrizPoderInteres.html" target="_blank">
+                        Ir a la plantilla de la matriz
+                    </a>
+
+                    <br>
+
+                    <span class="tag">Gestión de stakeholders</span>
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- SECCIÓN 3: TÉCNICAS -->
+        <section id="tecnicas" class="section-card">
+
+            <h2>Técnicas y marcos de trabajo</h2>
+
+            <p>
+                Las técnicas y metodologías ayudan a establecer una forma
+                organizada de trabajar y permiten mejorar la planificación
+                y el seguimiento de los proyectos.
+            </p>
+
+            <div class="grid-container">
+
+                <div class="grid-card">
+                    <h3>Scrum</h3>
+
+                    <p>
+                        Es un marco de trabajo ágil que divide el desarrollo
+                        en periodos cortos llamados Sprints, permitiendo
+                        entregar resultados de manera progresiva y recibir
+                        retroalimentación.
+                    </p>
+
+                    <span class="tag">Ágil</span>
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- SECCIÓN 4: PROYECTO DE CURSO -->
+        <section id="proyecto" class="section-card">
+
+            <h2>Proyecto de curso</h2>
+
+            <p>
+                En esta sección registro la información, actividades,
+                aprendizajes y avances relacionados con el proyecto
+                desarrollado durante el curso.
+            </p>
+
+            <div class="grid-container">
+
+                <div class="grid-card">
+                    <h3>Planificación del proyecto</h3>
+
+                    <p>
+                        En esta etapa se establecen los objetivos,
+                        actividades, recursos y tiempos necesarios
+                        para desarrollar correctamente el proyecto.
+                    </p>
+
+                    <span class="tag">Planificación</span>
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- SECCIÓN 5: PRINCIPIOS PMBOK 8 -->
+        <section id="principios" class="section-card">
+
+            <h2>Principios de dirección de proyectos - PMBOK 8</h2>
+
+            <div class="introduccion-principios">
+                Los principios son criterios que orientan el comportamiento,
+                el liderazgo y la toma de decisiones durante un proyecto.
+                No son una metodología rígida: ayudan al equipo a decidir
+                cómo actuar según las necesidades y el contexto del proyecto.
+            </div>
+
+            <div class="grid-container">
+
+                <!-- PRINCIPIO 1 -->
+                <div class="grid-card principio-card">
+                    <span class="principio-numero">PRINCIPIO 1</span>
+
+                    <h3>Adoptar una visión holística</h3>
+
+                    <p>
+                        Consiste en comprender que el proyecto no es una
+                        isla, sino que forma parte de un sistema en el que
+                        se relacionan las personas, la organización,
+                        la tecnología y los usuarios.
+                    </p>
+
+                    <p>
+                        <strong>Aplicación:</strong> al desarrollar una
+                        plataforma web, debemos considerar cómo se conectan
+                        la base de datos, el servidor, la interfaz y las
+                        necesidades de los usuarios.
+                    </p>
+
+                    <span class="tag">Visión integral</span>
+                </div>
+
+                <!-- PRINCIPIO 2 -->
+                <div class="grid-card principio-card">
+                    <span class="principio-numero">PRINCIPIO 2</span>
+
+                    <h3>Enfocarse en el valor</h3>
+
+                    <p>
+                        Busca que el proyecto produzca beneficios reales.
+                        No basta con terminar las actividades: el resultado
+                        debe resolver una necesidad y aportar valor.
+                    </p>
+
+                    <p>
+                        <strong>Aplicación:</strong> en una aplicación
+                        universitaria, se deben priorizar las funciones
+                        que los estudiantes necesitan, en lugar de invertir
+                        tiempo en características secundarias.
+                    </p>
+
+                    <span class="tag">Beneficios y resultados</span>
+                </div>
+
+                <!-- PRINCIPIO 3 -->
+                <div class="grid-card principio-card">
+                    <span class="principio-numero">PRINCIPIO 3</span>
+
+                    <h3>Incorporar la calidad</h3>
+
+                    <p>
+                        La calidad debe tenerse en cuenta desde el inicio
+                        del proyecto y durante todo su desarrollo.
+                        Implica establecer criterios de aceptación,
+                        realizar pruebas y mejorar continuamente.
+                    </p>
+
+                    <p>
+                        <strong>Aplicación:</strong> probar los formularios,
+                        validar los datos, verificar las funciones del
+                        sistema y corregir errores antes de publicar
+                        una plataforma.
+                    </p>
+
+                    <span class="tag">Pruebas y mejora continua</span>
+                </div>
+
+                <!-- PRINCIPIO 4 -->
+                <div class="grid-card principio-card">
+                    <span class="principio-numero">PRINCIPIO 4</span>
+
+                    <h3>Ser un líder responsable</h3>
+
+                    <p>
+                        Implica asumir la responsabilidad por los resultados,
+                        actuar con integridad y ética, comunicar los
+                        problemas y apoyar al equipo para encontrar
+                        soluciones.
+                    </p>
+
+                    <p>
+                        <strong>Aplicación:</strong> cuando ocurre un error
+                        en producción, el responsable coordina la solución,
+                        comunica el impacto y ayuda al equipo a evitar
+                        que el problema vuelva a presentarse.
+                    </p>
+
+                    <span class="tag">Responsabilidad y ética</span>
+                </div>
+
+                <!-- PRINCIPIO 5 -->
+                <div class="grid-card principio-card">
+                    <span class="principio-numero">PRINCIPIO 5</span>
+
+                    <h3>Integrar la sostenibilidad</h3>
+
+                    <p>
+                        Consiste en evaluar los impactos ambientales,
+                        sociales y económicos del proyecto, buscando
+                        que sus resultados sean viables y eficientes
+                        a largo plazo.
+                    </p>
+
+                    <p>
+                        <strong>Aplicación:</strong> optimizar el código
+                        para reducir el consumo de recursos, aprovechar
+                        la infraestructura disponible y planificar
+                        el mantenimiento futuro del software.
+                    </p>
+
+                    <span class="tag">Sostenibilidad a largo plazo</span>
+                </div>
+
+                <!-- PRINCIPIO 6 -->
+                <div class="grid-card principio-card">
+                    <span class="principio-numero">PRINCIPIO 6</span>
+
+                    <h3>Construir una cultura de empoderamiento</h3>
+
+                    <p>
+                        Busca crear un entorno de confianza donde las
+                        personas tengan autonomía, puedan aportar ideas
+                        y tomen decisiones dentro de sus responsabilidades.
+                    </p>
+
+                    <p>
+                        <strong>Aplicación:</strong> permitir que los
+                        desarrolladores propongan soluciones técnicas,
+                        participen en las decisiones y asuman tareas
+                        según sus conocimientos y experiencia.
+                    </p>
+
+                    <span class="tag">Autonomía y colaboración</span>
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- PIE DE PÁGINA -->
+        <footer style="
+            text-align: center;
+            color: #64748b;
+            padding: 15px;
+            margin-bottom: 10px;
+        ">
+            <p>Dashboard del estudiante | Gestión de Proyectos</p>
+            <p>Principios de dirección de proyectos - PMBOK 8</p>
+        </footer>
+
+    </main>
+
+</body>
+</html>
